@@ -15,12 +15,18 @@
 # http://www.hxa.name/articles/content/epub-guide_hxa7241_2007.html
 # https://gist.github.com/anqxyr/6c70a2e4e8209cd43fc1
 
+# Pour valider : en ligne avec http://validator.idpf.org/application/validate
+# ou localement avec einfo (paquetage Debian epub-utils) mais il n'attrappe pas autant de problèmes.
+
 # Standard library
 import json
 import zipfile
+import time
+from io import StringIO
 
 # Other libraries
 from lxml.html.clean import Cleaner
+from lxml import etree, html
 # http://www.yattag.org/
 # But Jinja2 seems far more popular
 from yattag import Doc
@@ -52,9 +58,16 @@ uris = {}
 doc, tag, text = Doc().tagtext()
 data = json.load(infile)
 doc.asis('<?xml version="1.0" ?>\n')
-doc.asis('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n')
+doc.asis('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">\n')
 with tag('html', ('xml:lang', 'fr'), xmlns = 'http://www.w3.org/1999/xhtml'):
-    with tag('h1'):
+    with tag('head'):
+        with tag('title'):
+            text("Mercredi Fiction")
+    text('\n')
+    with tag('body'):
+        with tag('h1'):
+            text("Mercredi Fiction")
+        text('\n')
         for toots in data:
             for toot in toots:
                 uri = toot["uri"]
@@ -63,13 +76,17 @@ with tag('html', ('xml:lang', 'fr'), xmlns = 'http://www.w3.org/1999/xhtml'):
                         text("Par %s <%s> le %s" % (toot["account"]["display_name"], toot["account"]["acct"],
                                                     toot["created_at"])) # TODO: format the date
                     text('\n')
-                    # Les pouètes contiennent de l'HTML, ce qui est vraiment une mauvaise idée
+                    # Les pouètes contiennent de l'HTML, ce qui est vraiment une mauvaise idée (même pas du XHTML)
                     cleaner = Cleaner(scripts=True, javascript=True, embedded=True, meta=True, page_structure=True,
                                       links=False, remove_unknown_tags=True,
                                       style=False)
-                    content = cleaner.clean_html(toot["content"]) 
-                    with tag('p', klass = 'content\n'):
-                        doc.asis("%s" % content)
+                    content = cleaner.clean_html(toot["content"])
+                    with tag('div', klass = 'content'):
+                        # Convert to XHTML
+                        tree = html.fromstring(content)
+                        result = etree.tostring(tree, pretty_print=False, method="xml")
+                        doc.asis(result.decode('UTF-8'))
+                    text('\n')
                     with tag('p', klass = 'url'):
                         with tag('a', href = toot["url"]):
                             text("Lien original")
@@ -102,18 +119,21 @@ with tag('package', ('unique-identifier', 'dcidid'), xmlns = 'http://www.idpf.or
       with tag('dc:publisher'):
           text("Stéphane Bortzmeyer")
       with tag('dc:date', ('xsi:type', "dcterms:W3CDTF")):
-          text("TODO")
+          text(time.strftime('%Y-%m-%d', time.gmtime(time.time())))
       with tag('dc:rights'):
         text("Chaque pouète reste avec sa propre licence")
     with tag('manifest'):
-        with tag('item', ('media-type', "application/x-dtbncx+xml"), id = 'toc', href = 'toc.ncx'):
-                 pass
         with tag('item', ('media-type', "text/css"), id = 'css', href = CSS):
                  pass
         with tag('item', ('media-type', "application/xhtml+xml"), id = 'contents', href = HTML):
                  pass
+        with tag('item', ('media-type', "application/x-dtbncx+xml"), id = 'ncx',  href = "toc.ncx"):
+                 pass
     with tag('spine', toc = 'ncx'):
         with tag('itemref', idref = 'contents'):
+            pass
+    with tag('guide'):
+        with tag('reference', type = "text", title = "Text", href = HTML):
             pass
 outfile = open(OPF, 'w')
 outfile.write(doc.getvalue())
@@ -133,11 +153,13 @@ with tag('ncx', xmlns = "http://www.daisy.org/z3986/2005/ncx/", version = "2005-
         with tag('meta', name = "dtb:maxPageNumber", content="0"):
             pass
     with tag('docTitle'):
-        text("Mercredi Fiction") # TODO date
+        with tag('text'):
+            text("Mercredi Fiction") # TODO date
     with tag('navMap'):
         with tag('navPoint', id = "navPoint-1", playOrder = "1"):
             with tag('navLabel'):
-                text("Mercredi Fiction")
+                with tag('text'):
+                    text("Mercredi Fiction")
             with tag('content', src = HTML):
                 pass
 outfile = open(TOC, 'w')

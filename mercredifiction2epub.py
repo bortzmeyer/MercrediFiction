@@ -40,7 +40,7 @@ from yattag import Doc
 LOG = "mercredifiction-%s.log"
 JSON = "mercredifiction.json"
 HTML = "mercredifiction.html"
-EPUB = "mercredifiction.epub"
+EPUB = "mercredifiction-%s.epub"
 CSS = "mercredifiction.css"
 OPF = "content.opf"
 TOC = "toc.ncx"
@@ -197,7 +197,7 @@ outfile = open(TOC, 'w')
 outfile.write(doc.getvalue())
 outfile.close()  
 
-with zipfile.ZipFile(EPUB, 'w') as myzip:
+with zipfile.ZipFile(EPUB % datestr, 'w') as myzip:
     myzip.write('mimetype', compress_type=None)
     for file in ['META-INF/container.xml', OPF, HTML, CSS, TOC]:
         myzip.write(file)

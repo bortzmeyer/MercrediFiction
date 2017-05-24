@@ -6,22 +6,28 @@
 # Transformer les hstoires étiquetées #MercrediFiction de Mastodon en
 # un livre EPUB. Stéphane Bortzmeyer <stephane@bortzmeyer.org>.
 
-# TODO ajouter un mot sur le fait qu'on n'a que son instance
-
 # Le fichier "log" est récolté par des appels périodiques à :
 #    madonctl --output json timeline :mercredifiction
+# Attention: cela ne donne que les pouètes qui sont sur l'instance
+# qu'interroge madonctl.  Il vaut donc mieux choisir une instance
+# « importante ».
 
 # Documents utiles à lire sur la génération d'EPUB :
 # http://www.hxa.name/articles/content/epub-guide_hxa7241_2007.html
 # https://gist.github.com/anqxyr/6c70a2e4e8209cd43fc1
 
-# Pour valider : en ligne avec http://validator.idpf.org/application/validate
-# ou localement avec einfo (paquetage Debian epub-utils) mais il n'attrappe pas autant de problèmes.
+# Pour valider : en ligne avec
+# http://validator.idpf.org/application/validate ou localement avec
+# einfo (paquetage Debian epub-utils) mais il n'attrape pas autant de
+# problèmes.
 
 # Standard library
 import json
 import zipfile
 import time
+import sys
+import re
+import locale
 from io import StringIO
 
 # Other libraries
@@ -31,15 +37,38 @@ from lxml import etree, html
 # But Jinja2 seems far more popular
 from yattag import Doc
 
-LOG = "mercredifiction.log"
+LOG = "mercredifiction-%s.log"
 JSON = "mercredifiction.json"
 HTML = "mercredifiction.html"
 EPUB = "mercredifiction.epub"
 CSS = "mercredifiction.css"
 OPF = "content.opf"
 TOC = "toc.ncx"
+RFC3339DATE = "%Y-%m-%d"
+RFC3339DATETIME = "%Y-%m-%dT%H:%M:%SZ"
+BLOCKLIST = ["TrendingBot@mastodon.social",]
 
-infile = open(LOG, 'r')
+def samedate(left, right):
+    return (left.tm_year == right.tm_year and left.tm_mon==right.tm_mon and left.tm_mday == right.tm_mday)
+
+def cleandate(str):
+    # En dépit de ce que dit la documentation, les secondes
+    # fractionnaires ne sont pas acceptées, il faut donc les retirer
+    return(re.sub('\.[0-9]+Z$', 'Z', str))
+
+def formatdate(str):
+    bdate = time.strptime(cleandate(str), RFC3339DATETIME)
+    return time.strftime("%d %B %Y à %H h %M UTC", bdate)
+
+locale.setlocale(locale.LC_TIME, 'fr_FR')
+  
+if len(sys.argv) != 2:
+    sys.stderr.write("Usage: %s date-in-rfc-3339-format\n" % sys.argv[0])
+    sys.exit(1)
+date = time.strptime(sys.argv[1], RFC3339DATE)
+datestr = time.strftime(RFC3339DATE, date)
+
+infile = open(LOG % datestr, 'r')
 outfile = open(JSON, 'w')
 outfile.write('[')
 first = True
@@ -62,19 +91,21 @@ doc.asis('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/T
 with tag('html', ('xml:lang', 'fr'), xmlns = 'http://www.w3.org/1999/xhtml'):
     with tag('head'):
         with tag('title'):
-            text("Mercredi Fiction")
+            text("Mercredi Fiction %s" % datestr)
     text('\n')
     with tag('body'):
         with tag('h1'):
-            text("Mercredi Fiction")
+            text("Mercredi Fiction %s" % datestr)
         text('\n')
         for toots in data:
             for toot in toots:
                 uri = toot["uri"]
-                if uri not in uris: # TODO supprimer des pouètes comme le TrendingTopic
+                if uri not in uris and \
+                   samedate(date, time.strptime(cleandate(toot["created_at"]), RFC3339DATETIME)) and \
+                   toot["account"]["acct"] not in BLOCKLIST:
                     with tag('h2'):
                         text("Par %s <%s> le %s" % (toot["account"]["display_name"], toot["account"]["acct"],
-                                                    toot["created_at"])) # TODO: format the date
+                                                    formatdate(toot["created_at"]))) 
                     text('\n')
                     # Les pouètes contiennent de l'HTML, ce qui est vraiment une mauvaise idée (même pas du XHTML)
                     cleaner = Cleaner(scripts=True, javascript=True, embedded=True, meta=True, page_structure=True,
@@ -105,7 +136,7 @@ with tag('package', ('unique-identifier', 'dcidid'), xmlns = 'http://www.idpf.or
              ('xmlns:xsi', "http://www.w3.org/2001/XMLSchema-instance"),
              ('xmlns:opf', "http://www.idpf.org/2007/opf")):
       with tag('dc:title'):
-                 text("Mercredi Fiction") # TODO ajouter la date
+                 text("Mercredi Fiction %s" % datestr) 
       with tag('dc:language', ('xsi:type', "dcterms:RFC3066")):
                  text("fr")
       with tag('dc:identifier', ('opf:scheme', "URI"), id = "dcidid"):
@@ -119,7 +150,7 @@ with tag('package', ('unique-identifier', 'dcidid'), xmlns = 'http://www.idpf.or
       with tag('dc:publisher'):
           text("Stéphane Bortzmeyer")
       with tag('dc:date', ('xsi:type', "dcterms:W3CDTF")):
-          text(time.strftime('%Y-%m-%d', time.gmtime(time.time())))
+          text(time.strftime(RFC3339DATE, time.gmtime(time.time())))
       with tag('dc:rights'):
         text("Chaque pouète reste avec sa propre licence")
     with tag('manifest'):
@@ -154,12 +185,12 @@ with tag('ncx', xmlns = "http://www.daisy.org/z3986/2005/ncx/", version = "2005-
             pass
     with tag('docTitle'):
         with tag('text'):
-            text("Mercredi Fiction") # TODO date
+            text("Mercredi Fiction %s" % datestr) 
     with tag('navMap'):
         with tag('navPoint', id = "navPoint-1", playOrder = "1"):
             with tag('navLabel'):
                 with tag('text'):
-                    text("Mercredi Fiction")
+                    text("Mercredi Fiction %s" % datestr)
             with tag('content', src = HTML):
                 pass
 outfile = open(TOC, 'w')

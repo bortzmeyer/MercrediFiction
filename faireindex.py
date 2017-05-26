@@ -61,13 +61,13 @@ with tag('html', ('xml:lang', 'fr'), lang = 'fr', xmlns = 'http://www.w3.org/199
         with tag('br'):
             pass
         with tag('p'):
-            text("Code disponible en ")
+            text("Code disponible ")
             with tag('a', href = "https://github.com/bortzmeyer/MercrediFiction"):
                 text("sur Github")
         with tag('br'):
             pass
         with tag('p'):
-            text("Autres distributions de pouètes #MercrediFiction ")
+            text("Autres distributions de pouètes #MercrediFiction :")
             with tag('ul'):
                 with tag('li'):
                     with tag('a', href = "http://mercredifiction.xyz/"):

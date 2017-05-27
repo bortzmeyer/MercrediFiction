@@ -100,6 +100,8 @@ doc.asis('<?xml version="1.0" ?>\n')
 doc.asis('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">\n')
 with tag('html', ('xml:lang', 'fr'), xmlns = 'http://www.w3.org/1999/xhtml'):
     with tag('head'):
+        with tag('link', rel = "stylesheet", type = "text/css", href = "mercredifiction.css"):
+            pass
         with tag('title'):
             text("Mercredi Fiction %s" % datestr)
     text('\n')
@@ -107,6 +109,7 @@ with tag('html', ('xml:lang', 'fr'), xmlns = 'http://www.w3.org/1999/xhtml'):
         with tag('h1'):
             text("Mercredi Fiction du %s" % formatdate(datestr, short=True))
         text('\n')
+        numtoots = 0
         for toots in data:
             for toot in toots:
                 uri = toot["uri"]
@@ -133,6 +136,11 @@ with tag('html', ('xml:lang', 'fr'), xmlns = 'http://www.w3.org/1999/xhtml'):
                             text("Lien original")
                     text('\n')
                     uris[uri] = True
+                    numtoots += 1
+        with tag('hr'):
+            pass
+        with tag('p', klass = "summary"):
+            text("(%d pouètes en tout)" % numtoots)
 outfile = open(HTML % datestr, 'w')
 infile.close()
 outfile.write(doc.getvalue())

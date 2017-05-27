@@ -10,6 +10,11 @@ Voir les commentaires dans les programmes.
 
 Il faut Python 3, [madonctl](https://github.com/McKael/madonctl), et les modules Python lxml et yattag.
 
+TODO documenter la config crontab
+ maybe with something like
+* * * * * user [ $(($(date +\%H)+offset))  == 1400 ] && command
+ et faire un exit 0 dans le script si ce n'est pas proche de la bonne heure en France (oui, c'est moche mais ça fonctionnera)
+
 ## Autres outils
 
 Un autre outil (apparemment bien plus riche/complexe) est https://github.com/Meewan/MercrediFiction

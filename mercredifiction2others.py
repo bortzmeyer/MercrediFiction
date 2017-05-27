@@ -39,7 +39,7 @@ from yattag import Doc
 
 LOG = "mercredifiction-%s.log"
 JSON = "mercredifiction.json"
-HTML = "mercredifiction.html"
+HTML = "mercredifiction-%s.html"
 EPUB = "mercredifiction-%s.epub"
 CSS = "mercredifiction.css"
 OPF = "content.opf"
@@ -56,9 +56,15 @@ def cleandate(str):
     # fractionnaires ne sont pas acceptées, il faut donc les retirer
     return(re.sub('\.[0-9]+Z$', 'Z', str))
 
-def formatdate(str):
-    bdate = time.strptime(cleandate(str), RFC3339DATETIME)
-    return time.strftime("%d %B %Y à %H h %M UTC", bdate)
+def formatdate(str, short=False):
+    try:
+        bdate = time.strptime(cleandate(str), RFC3339DATETIME)
+    except ValueError:
+        bdate = time.strptime(cleandate(str), RFC3339DATE)
+    if short:
+        return time.strftime("%d %B %Y", bdate)
+    else:
+        return time.strftime("%d %B %Y à %H h %M UTC", bdate)
 
 locale.setlocale(locale.LC_TIME, 'fr_FR')
   
@@ -68,6 +74,9 @@ if len(sys.argv) != 2:
 date = time.strptime(sys.argv[1], RFC3339DATE)
 datestr = time.strftime(RFC3339DATE, date)
 
+# On ramasse les pouètes par des appels à madonctl qu'on concatène. Le
+# résultat (LOG) n'est donc pas du JSON, on le transforme donc en
+# tableau JSON.
 infile = open(LOG % datestr, 'r')
 outfile = open(JSON, 'w')
 outfile.write('[')
@@ -82,6 +91,7 @@ infile.close()
 outfile.write(']')
 outfile.close()
 
+# Transformer le JSON en HTML
 infile = open(JSON, 'r')
 uris = {}
 doc, tag, text = Doc().tagtext()
@@ -95,7 +105,7 @@ with tag('html', ('xml:lang', 'fr'), xmlns = 'http://www.w3.org/1999/xhtml'):
     text('\n')
     with tag('body'):
         with tag('h1'):
-            text("Mercredi Fiction %s" % datestr)
+            text("Mercredi Fiction du %s" % formatdate(datestr, short=True))
         text('\n')
         for toots in data:
             for toot in toots:
@@ -123,7 +133,7 @@ with tag('html', ('xml:lang', 'fr'), xmlns = 'http://www.w3.org/1999/xhtml'):
                             text("Lien original")
                     text('\n')
                     uris[uri] = True
-outfile = open(HTML, 'w')
+outfile = open(HTML % datestr, 'w')
 infile.close()
 outfile.write(doc.getvalue())
 outfile.close()
@@ -156,7 +166,7 @@ with tag('package', ('unique-identifier', 'dcidid'), xmlns = 'http://www.idpf.or
     with tag('manifest'):
         with tag('item', ('media-type', "text/css"), id = 'css', href = CSS):
                  pass
-        with tag('item', ('media-type', "application/xhtml+xml"), id = 'contents', href = HTML):
+        with tag('item', ('media-type', "application/xhtml+xml"), id = 'contents', href = HTML % datestr):
                  pass
         with tag('item', ('media-type', "application/x-dtbncx+xml"), id = 'ncx',  href = "toc.ncx"):
                  pass
@@ -164,7 +174,7 @@ with tag('package', ('unique-identifier', 'dcidid'), xmlns = 'http://www.idpf.or
         with tag('itemref', idref = 'contents'):
             pass
     with tag('guide'):
-        with tag('reference', type = "text", title = "Text", href = HTML):
+        with tag('reference', type = "text", title = "Text", href = HTML % datestr):
             pass
 outfile = open(OPF, 'w')
 outfile.write(doc.getvalue())
@@ -191,7 +201,7 @@ with tag('ncx', xmlns = "http://www.daisy.org/z3986/2005/ncx/", version = "2005-
             with tag('navLabel'):
                 with tag('text'):
                     text("Mercredi Fiction %s" % datestr)
-            with tag('content', src = HTML):
+            with tag('content', src = HTML % datestr):
                 pass
 outfile = open(TOC, 'w')
 outfile.write(doc.getvalue())
@@ -199,7 +209,7 @@ outfile.close()
 
 with zipfile.ZipFile(EPUB % datestr, 'w') as myzip:
     myzip.write('mimetype', compress_type=None)
-    for file in ['META-INF/container.xml', OPF, HTML, CSS, TOC]:
+    for file in ['META-INF/container.xml', OPF, HTML % datestr, CSS, TOC]:
         myzip.write(file)
     myzip.close()
     

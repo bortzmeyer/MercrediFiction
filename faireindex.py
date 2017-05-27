@@ -10,7 +10,8 @@ import locale
 from yattag import Doc
 
 INDEX = "index.html"
-LAST = "mercredifiction-dernier.epub"
+LASTEPUB = "mercredifiction-dernier.epub"
+LASTHTML = "mercredifiction-dernier.html"
 RFC3339DATE = "%Y-%m-%d"
 
 def formatdate(str):
@@ -31,30 +32,58 @@ with tag('html', ('xml:lang', 'fr'), lang = 'fr', xmlns = 'http://www.w3.org/199
             pass
     text('\n')
     epubs = {}
+    htmls = {}
     with tag('body'):
         for file in os.listdir('.'):
                result = re.search("-([0-9-]+)\.epub", file)
                if result:                
                   epubs[result.group(1)] = file
-        sorteddates = sorted(epubs, reverse=True)
+        sortedepubdates = sorted(epubs, reverse=True)
+        for file in os.listdir('.'):
+               result = re.search("-([0-9-]+)\.html", file)
+               if result:                
+                  htmls[result.group(1)] = file
+        sortedhtmldates = sorted(htmls, reverse=True)
         with tag('h1'):
             text("Mercredi Fiction")    
         text('\n')
-        if os.path.exists(LAST):
-            os.remove(LAST)
-        os.symlink(epubs[sorteddates[0]], LAST)
+        with tag('h2'):
+            text("Versions EPUB")
+        if os.path.exists(LASTEPUB):
+            os.remove(LASTEPUB)
+        os.symlink(epubs[sortedepubdates[0]], LASTEPUB)
         with tag('p'):
-            with tag('a', href = LAST):
+            with tag('a', href = LASTEPUB):
                 text("Dernière version")
-            text(" (le %s)" % formatdate(sorteddates[0]))
+            text(" (le %s)" % formatdate(sortedepubdates[0]))
         text('\n')
         with tag('p'):
             text("Versions précédentes")
             with tag('ul'):
                 text('\n')
-                for date in sorteddates[1:]:
+                for date in sortedepubdates[1:]:
                     with tag('li'):
                         with tag('a', href = epubs[date]):
+                            text("Pouètes du %s" % formatdate(date))
+                    text('\n')
+                text('\n')
+        with tag('h2'):
+            text("Versions HTML")
+        if os.path.exists(LASTHTML):
+            os.remove(LASTHTML)
+        os.symlink(htmls[sortedhtmldates[0]], LASTHTML)
+        with tag('p'):
+            with tag('a', href = LASTHTML):
+                text("Dernière version")
+            text(" (le %s)" % formatdate(sortedhtmldates[0]))
+        text('\n')
+        with tag('p'):
+            text("Versions précédentes")
+            with tag('ul'):
+                text('\n')
+                for date in sortedhtmldates[1:]:
+                    with tag('li'):
+                        with tag('a', href = htmls[date]):
                             text("Pouètes du %s" % formatdate(date))
                     text('\n')
                 text('\n')

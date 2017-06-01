@@ -19,7 +19,7 @@
 # Pour valider : en ligne avec
 # http://validator.idpf.org/application/validate ou localement avec
 # einfo (paquetage Debian epub-utils) mais il n'attrape pas autant de
-# problèmes.
+# problèmes ou encore epubcheck (paquetage Debian du même nom).
 
 # Standard library
 import json

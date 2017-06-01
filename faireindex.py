@@ -28,6 +28,8 @@ with tag('html', ('xml:lang', 'fr'), lang = 'fr', xmlns = 'http://www.w3.org/199
     with tag('head'):
         with tag('title'):
             text("Mercredi Fiction")
+        with tag('link', rel = "stylesheet", type="text/css", href="mercredifiction.css"):
+            pass
         with tag('meta', ('http-equiv', "Content-Type"), content = "text/html; charset=UTF-8"):
             pass
     text('\n')
@@ -87,12 +89,16 @@ with tag('html', ('xml:lang', 'fr'), lang = 'fr', xmlns = 'http://www.w3.org/199
                             text("Pouètes du %s" % formatdate(date))
                     text('\n')
                 text('\n')
+        with tag('hr'):
+            pass
         with tag('br'):
             pass
         with tag('p'):
             text("Code disponible ")
             with tag('a', href = "https://github.com/bortzmeyer/MercrediFiction"):
                 text("sur Github")
+        with tag('hr'):
+            pass
         with tag('br'):
             pass
         with tag('p'):
@@ -101,6 +107,13 @@ with tag('html', ('xml:lang', 'fr'), lang = 'fr', xmlns = 'http://www.w3.org/199
                 with tag('li'):
                     with tag('a', href = "http://mercredifiction.xyz/"):
                         text("mercredifiction.xyz")
+        with tag('hr'):
+            pass
+        with tag('br'):
+            pass
+        with tag('p'):
+            text("Service maintenu par Stéphane Bortzmeyer <stephane+mercredifiction@bortzmeyer.org>. Les pouètes sont écrits par divers auteurs, pas par moi.")
+
 text('\n')
 outfile = open(INDEX, 'w')
 outfile.write(doc.getvalue())

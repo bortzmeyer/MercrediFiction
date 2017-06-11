@@ -7,6 +7,10 @@ if [ -z "$1" ]; then
 fi
 LOG=mercredifiction-${1}.log
 
-cd ${BASEDIR}
-
-madonctl --output json timeline :MercrediFiction >> ${LOG}
+# Vraiment mercredi ?
+export TZ=Europe/Paris
+dayofweek=$(date +"%u")
+if [ "$dayofweek" -eq 3 ];  then
+    cd ${BASEDIR}
+    madonctl --output json timeline :MercrediFiction >> ${LOG}
+fi

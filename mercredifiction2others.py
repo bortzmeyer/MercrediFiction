@@ -126,7 +126,7 @@ with tag('html', ('xml:lang', 'fr'), xmlns = 'http://www.w3.org/1999/xhtml'):
                                       style=False)
                     content = cleaner.clean_html(toot["content"])
                     with tag('div', klass = 'content'):
-                        # Convert to XHTML
+                        # Conversion en XHTML
                         tree = html.fromstring(content)
                         result = etree.tostring(tree, pretty_print=False, method="xml")
                         doc.asis(result.decode('UTF-8'))

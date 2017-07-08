@@ -4,7 +4,8 @@
 # [Used for a french-specific purpose, so all comments are in french.]
 
 # Transformer les hstoires étiquetées #MercrediFiction de Mastodon en
-# un livre EPUB. Stéphane Bortzmeyer <stephane@bortzmeyer.org>.
+# un livre EPUB ou en pages HTML. Stéphane Bortzmeyer
+# <stephane@bortzmeyer.org>.
 
 # Le fichier "log" est récolté par des appels périodiques à :
 #    madonctl --output json timeline :mercredifiction

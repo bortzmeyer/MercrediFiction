@@ -49,6 +49,13 @@ with tag('html', ('xml:lang', 'fr'), lang = 'fr', xmlns = 'http://www.w3.org/199
         with tag('h1'):
             text("Mercredi Fiction")    
         text('\n')
+        with tag('p'):
+            with tag('a', href = "#HTML"):
+                text("Versions HTML")
+        with tag('hr'):
+            pass
+        with tag('br'):
+            pass
         with tag('h2'):
             text("Versions EPUB")
         if os.path.exists(LASTEPUB):
@@ -69,6 +76,8 @@ with tag('html', ('xml:lang', 'fr'), lang = 'fr', xmlns = 'http://www.w3.org/199
                             text("Pouètes du %s" % formatdate(date))
                     text('\n')
                 text('\n')
+        with tag('a', name="#HTML"):
+             pass
         with tag('h2'):
             text("Versions HTML")
         if os.path.exists(LASTHTML):

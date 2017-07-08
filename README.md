@@ -3,7 +3,7 @@
 (The Mercredi Fiction toots are in french so all the documentation here is in french.)
 
 Outils pour transformer les #MercrediFiction de Mastodon en autres
-formats (actuellement EPUB et HTML)
+formats (actuellement EPUB et HTML). Le résultat est [visible ici](http://mercredifiction.bortzmeyer.org/).
 
 Voir les commentaires dans les programmes.
 
@@ -11,7 +11,10 @@ Voir les commentaires dans les programmes.
 
 Il faut Python 3, [madonctl](https://github.com/McKael/madonctl), et les modules Python lxml et yattag.
 
-Il faut d'abord configurer madonctl avec votre instance (regardez la documentation de ce programme).
+Il faut d'abord configurer madonctl avec votre instance (regardez la
+documentation de ce programme mais, en gros, en supposant que votre
+compte ait été créé avec l'adresse `mercredifiction@example.com` et
+qu'il soit chez [Framapiaf](https://framapiaf.org/about), c'est du genre `madonctl config dump -i framapiaf.org -L mercredifiction@example.com -P SECRET > $HOME/.config/madonctl/madonctl.yaml`.
 
 Ensuite, on exécute en général les scripts depuis cron, par exemple, sur une machine qui
 est à l'heure légale française :
@@ -35,7 +38,7 @@ avoir une crontab comme :
 0 23 0 * * Wed (cd ./MercrediFiction; ./create-epub.sh 0000)
 ```
 
-(Avec `create-epub.sh un script qui utilise `check-time.sh`, puis appelle ̀mercredifiction2others.py` et `faireindex.py` regardez `create-last.sh` pour voir comment faire.
+(Avec `create-epub.sh un script qui utilise `check-time.sh`, puis appelle ̀mercredifiction2others.py` et `faireindex.py` regardez `create-last.sh` pour voir comment faire.)
 
 
 ## Autres outils

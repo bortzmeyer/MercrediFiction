@@ -22,7 +22,7 @@ locale.setlocale(locale.LC_TIME, 'fr_FR')
   
 doc, tag, text = Doc().tagtext()
 doc.asis('<?xml version="1.0" ?>\n')
-doc.asis('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"')
+doc.asis('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">')
 
 with tag('html', ('xml:lang', 'fr'), lang = 'fr', xmlns = 'http://www.w3.org/1999/xhtml'):
     with tag('head'):
@@ -54,8 +54,6 @@ with tag('html', ('xml:lang', 'fr'), lang = 'fr', xmlns = 'http://www.w3.org/199
                 text("Versions HTML")
         with tag('hr'):
             pass
-        with tag('br'):
-            pass
         with tag('h2'):
             text("Versions EPUB")
         if os.path.exists(LASTEPUB):
@@ -68,16 +66,17 @@ with tag('html', ('xml:lang', 'fr'), lang = 'fr', xmlns = 'http://www.w3.org/199
         text('\n')
         with tag('p'):
             text("Versions précédentes")
-            with tag('ul'):
+        with tag('ul'):
+            text('\n')
+            for date in sortedepubdates[1:]:
+                with tag('li'):
+                    with tag('a', href = epubs[date]):
+                        text("Pouètes du %s" % formatdate(date))
                 text('\n')
-                for date in sortedepubdates[1:]:
-                    with tag('li'):
-                        with tag('a', href = epubs[date]):
-                            text("Pouètes du %s" % formatdate(date))
-                    text('\n')
-                text('\n')
-        with tag('a', name="#HTML"):
-             pass
+            text('\n')
+        with tag('p'):
+            with tag('a', name="HTML"):
+                pass
         with tag('h2'):
             text("Versions HTML")
         if os.path.exists(LASTHTML):
@@ -90,17 +89,15 @@ with tag('html', ('xml:lang', 'fr'), lang = 'fr', xmlns = 'http://www.w3.org/199
         text('\n')
         with tag('p'):
             text("Versions précédentes")
-            with tag('ul'):
+        with tag('ul'):
+            text('\n')
+            for date in sortedhtmldates[1:]:
+                with tag('li'):
+                    with tag('a', href = htmls[date]):
+                        text("Pouètes du %s" % formatdate(date))
                 text('\n')
-                for date in sortedhtmldates[1:]:
-                    with tag('li'):
-                        with tag('a', href = htmls[date]):
-                            text("Pouètes du %s" % formatdate(date))
-                    text('\n')
-                text('\n')
+            text('\n')
         with tag('hr'):
-            pass
-        with tag('br'):
             pass
         with tag('p'):
             text("Code disponible ")
@@ -108,17 +105,13 @@ with tag('html', ('xml:lang', 'fr'), lang = 'fr', xmlns = 'http://www.w3.org/199
                 text("sur Github")
         with tag('hr'):
             pass
-        with tag('br'):
-            pass
         with tag('p'):
             text("Autres distributions de pouètes #MercrediFiction :")
-            with tag('ul'):
-                with tag('li'):
-                    with tag('a', href = "http://mercredifiction.xyz/"):
-                        text("mercredifiction.xyz")
+        with tag('ul'):
+            with tag('li'):
+                with tag('a', href = "http://mercredifiction.xyz/"):
+                    text("mercredifiction.xyz")
         with tag('hr'):
-            pass
-        with tag('br'):
             pass
         with tag('p'):
             text("Service maintenu par Stéphane Bortzmeyer <stephane+mercredifiction@bortzmeyer.org>. Les pouètes sont écrits par divers auteurs, pas par moi.")

@@ -121,7 +121,8 @@ with tag('html', ('xml:lang', 'fr'), xmlns = 'http://www.w3.org/1999/xhtml'):
                         text("Par %s <%s> le %s" % (toot["account"]["display_name"], toot["account"]["acct"],
                                                     formatdate(toot["created_at"]))) 
                     text('\n')
-                    # Les pouètes contiennent de l'HTML, ce qui est vraiment une mauvaise idée (même pas du XHTML)
+                    # Les pouètes contiennent de l'HTML, ce qui est vraiment une mauvaise idée (même pas du XHTML).
+                    # TODO : il faudrait aussi supprimer les attributs target des <a>, qui n'existent pas en XHTML strict, et empêchent une validation parfaite
                     cleaner = Cleaner(scripts=True, javascript=True, embedded=True, meta=True, page_structure=True,
                                       links=False, remove_unknown_tags=True,
                                       style=False)

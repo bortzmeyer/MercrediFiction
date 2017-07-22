@@ -114,7 +114,11 @@ with tag('html', ('xml:lang', 'fr'), lang = 'fr', xmlns = 'http://www.w3.org/199
         with tag('hr'):
             pass
         with tag('p'):
-            text("Service maintenu par Stéphane Bortzmeyer <stephane+mercredifiction@bortzmeyer.org>. Les pouètes sont écrits par divers auteurs, pas par moi.")
+            text("Service maintenu par Stéphane Bortzmeyer, courrier à <stephane+mercredifiction@bortzmeyer.org>, Mastodon à ")
+            with tag('code'):
+                 with tag('a', href="https://mastodon.gougere.fr/@bortzmeyer"):
+                     text("bortzmeyer@mastodon.gougere.fr")
+            text(". Les pouètes sont écrits par divers auteurs, pas par moi. Chacun a donc sa propre licence.")
 
 text('\n')
 outfile = open(INDEX, 'w')

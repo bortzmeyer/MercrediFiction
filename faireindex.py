@@ -103,6 +103,10 @@ with tag('html', ('xml:lang', 'fr'), lang = 'fr', xmlns = 'http://www.w3.org/199
             text("Code disponible ")
             with tag('a', href = "https://github.com/bortzmeyer/MercrediFiction"):
                 text("sur Github")
+            text(", avec ")
+            with tag('a', href="http://www.bortzmeyer.org/mastodon-mercredifiction.html"):
+                text("explications")
+            text(".")    
         with tag('hr'):
             pass
         with tag('p'):

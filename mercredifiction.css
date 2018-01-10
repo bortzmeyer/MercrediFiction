@@ -1,5 +1,12 @@
 body {
     padding: 0;
+    margin: 5% auto;
+    line-height: 1.6;
+    text-shadow: 0 1px 0 #ffffff;
+    max-width: 700px;
+    font-size: 18px;
+    color:#444;
+    text-align: justify;
 }
 
 p.url {
@@ -9,4 +16,3 @@ p.url {
 p.summary {
     font-size: 70%;
 }
-

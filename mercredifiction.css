@@ -1,11 +1,14 @@
 body {
     padding: 0;
-    margin: 5% auto;
-    line-height: 1.6;
+    margin: 2% auto;
+    line-height: 1.4;
     text-shadow: 0 1px 0 #ffffff;
-    max-width: 700px;
+    max-width: 850px;
     font-size: 18px;
     color:#444;
+}
+
+p {
     text-align: justify;
 }
 

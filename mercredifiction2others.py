@@ -63,9 +63,9 @@ def formatdate(str, short=False):
     except ValueError:
         bdate = time.strptime(cleandate(str), RFC3339DATE)
     if short:
-        return time.strftime("%d %B %Y", bdate)
+        return time.strftime("%d %B %Y", bdate)
     else:
-        return time.strftime("%d %B %Y à %H h %M UTC", bdate)
+        return time.strftime("%d %B %Y à %H h %M UTC", bdate)
 
 locale.setlocale(locale.LC_TIME, 'fr_FR')
   

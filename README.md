@@ -43,4 +43,4 @@ avoir une crontab comme :
 
 ## Autres outils
 
-Un autre outil (apparemment bien plus riche/complexe) est https://github.com/Meewan/MercrediFiction
+Un autre outil (apparemment bien plus riche/complexe) est https://github.com/Meewan/MercrediFiction. Un autre est en cours de développement en https://mercredifiction.io/.

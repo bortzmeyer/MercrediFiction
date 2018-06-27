@@ -113,8 +113,8 @@ with tag('html', ('xml:lang', 'fr'), lang = 'fr', xmlns = 'http://www.w3.org/199
             text("Autres distributions de pouètes #MercrediFiction :")
         with tag('ul'):
             with tag('li'):
-                with tag('a', href = "http://mercredifiction.xyz/"):
-                    text("mercredifiction.xyz")
+                with tag('a', href = "https://mercredifiction.io/"):
+                    text("mercredifiction.io (en cours de développement)")
         with tag('hr'):
             pass
         with tag('p'):

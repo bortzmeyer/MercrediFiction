@@ -40,6 +40,9 @@ avoir une crontab comme :
 
 (Avec `create-epub.sh un script qui utilise `check-time.sh`, puis appelle ̀mercredifiction2others.py` et `faireindex.py` regardez `create-last.sh` pour voir comment faire.)
 
+## Dépôt de référence
+
+À [FramaGit](https://framagit.org/bortzmeyer/MercrediFiction)
 
 ## Autres outils
 
